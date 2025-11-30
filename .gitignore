@@ -1,0 +1,53 @@
+# Environment and secrets
+.env
+.env.*
+
+# Virtual environment
+/venv
+venv/
+.venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+*.manifest
+*.spec
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# IDE/Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Binary/Large files
+*.pdf
+*.zip
+*.tar.gz
+
+# Temp files
+.tmp/
+tmp/
+temp/

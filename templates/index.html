@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banana Peel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        .api-key-top {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .api-key-input-group {
+            background: white;
+            padding: 12px 16px;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 280px;
+        }
+
+        .api-key-input-group input[type="password"] {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 0.9em;
+            background: #fafafa;
+            transition: all 0.3s;
+            font-family: monospace;
+        }
+
+        .api-key-input-group input[type="password"]:focus {
+            outline: none;
+            border-color: #9ca3af;
+            background: white;
+        }
+
+        .api-key-input-group input[type="password"]::placeholder {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        .api-key-link {
+            font-size: 0.85em;
+        }
+
+        .api-key-link a {
+            color: #6b7280;
+            text-decoration: none;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .api-key-link a:hover {
+            color: #374151;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            color: #7f8c8d;
+            font-weight: 400;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+            padding: 50px;
+            margin-bottom: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 40px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 12px;
+            font-size: 1.05em;
+        }
+
+        .upload-area {
+            position: relative;
+            border: 3px dashed #d1d5db;
+            border-radius: 12px;
+            padding: 50px 30px;
+            text-align: center;
+            background: #fafafa;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .upload-area:hover {
+            border-color: #9ca3af;
+            background: #f9fafb;
+        }
+
+        .upload-area.drag-over {
+            border-color: #6b7280;
+            background: #f3f4f6;
+        }
+
+        input[type="file"] {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            cursor: pointer;
+        }
+
+        .upload-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+            color: #9ca3af;
+        }
+
+        .upload-text {
+            font-size: 1.1em;
+            color: #4b5563;
+            margin-bottom: 8px;
+        }
+
+        .upload-subtext {
+            font-size: 0.9em;
+            color: #9ca3af;
+        }
+
+        .file-name {
+            margin-top: 15px;
+            padding: 12px 20px;
+            background: #f3f4f6;
+            border-radius: 8px;
+            color: #374151;
+            font-weight: 500;
+            display: none;
+        }
+
+        .file-name.active {
+            display: block;
+        }
+
+
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.15em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .submit-btn:hover {
+            background: #34495e;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(44, 62, 80, 0.2);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .instructions {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+            padding: 40px 50px;
+        }
+
+        .instructions h3 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            font-size: 1.5em;
+            font-weight: 700;
+        }
+
+        .instructions ol {
+            margin-left: 25px;
+        }
+
+        .instructions li {
+            margin-bottom: 15px;
+            line-height: 1.7;
+            color: #4b5563;
+            font-size: 1.05em;
+        }
+
+        .instructions strong {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .instructions p {
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 2px solid #f3f4f6;
+            font-style: italic;
+            color: #6b7280;
+            line-height: 1.6;
+        }
+
+        .alert {
+            padding: 18px 24px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            font-size: 1em;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            border-left: 4px solid #10b981;
+            color: #065f46;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            border-left: 4px solid #ef4444;
+            color: #991b1b;
+        }
+
+        .loader {
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #6b7280;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .processing {
+            text-align: center;
+            display: none;
+            padding: 30px;
+        }
+
+        .processing.active {
+            display: block;
+        }
+
+        .processing .loader {
+            display: block;
+        }
+
+        .processing p {
+            color: #6b7280;
+            font-size: 1.05em;
+            margin-top: 15px;
+        }
+
+        .progress-container {
+            margin-top: 25px;
+            text-align: left;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .progress-bar-wrapper {
+            background: #e5e7eb;
+            border-radius: 8px;
+            height: 12px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, #10b981, #059669);
+            height: 100%;
+            border-radius: 8px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .slides-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .slide-status {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .slide-status .slide-num {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+
+        .slide-status .stage {
+            font-size: 0.85em;
+            color: #6b7280;
+        }
+
+        .slide-status.waiting {
+            background: #f9fafb;
+        }
+
+        .slide-status.extracting {
+            background: #fef3c7;
+            border-color: #fcd34d;
+        }
+
+        .slide-status.extracting .stage {
+            color: #92400e;
+        }
+
+        .slide-status.generating {
+            background: #dbeafe;
+            border-color: #60a5fa;
+        }
+
+        .slide-status.generating .stage {
+            color: #1e40af;
+        }
+
+        .slide-status.converting {
+            background: #e0e7ff;
+            border-color: #818cf8;
+        }
+
+        .slide-status.converting .stage {
+            color: #3730a3;
+        }
+
+        .slide-status.complete {
+            background: #d1fae5;
+            border-color: #34d399;
+        }
+
+        .slide-status.complete .stage {
+            color: #065f46;
+        }
+
+        .download-btn {
+            display: none;
+            width: 100%;
+            padding: 18px;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.15em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .download-btn:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .download-btn.active {
+            display: block;
+        }
+
+        .error-message {
+            background: #fee2e2;
+            border: 1px solid #fca5a5;
+            border-radius: 8px;
+            padding: 15px;
+            color: #991b1b;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .error-message.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="api-key-top">
+        <div class="api-key-input-group">
+            <input type="password" id="api_key" name="api_key" form="uploadForm" placeholder="API Key" required>
+            <div class="api-key-link">
+                <a href="https://aistudio.google.com/apikey" target="_blank">Get key</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>🍌 Banana Peel</h1>
+            <p>Converts your nano banana slides into proper PDF slides</p>
+        </div>
+
+        <div class="card">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message | safe }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST" enctype="multipart/form-data" id="uploadForm">
+                <div class="form-group">
+                    <label for="file">Upload Slide</label>
+                    <div class="upload-area" id="uploadArea">
+                        <input type="file" id="file" name="file" accept=".pdf,.png,.jpg,.jpeg" required>
+                        <div class="upload-icon">📁</div>
+                        <div class="upload-text">Click to browse or drag and drop</div>
+                        <div class="upload-subtext">PDF, PNG, JPG, JPEG (Max 50MB)</div>
+                        <div class="file-name" id="fileName"></div>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">Convert to PDF</button>
+            </form>
+
+            <div class="processing" id="processingDiv">
+                <div class="loader"></div>
+                <p id="processingText">Processing your slides...</p>
+
+                <div class="progress-container">
+                    <div class="progress-header">
+                        <span>Progress</span>
+                        <span id="progressPercent">0%</span>
+                    </div>
+                    <div class="progress-bar-wrapper">
+                        <div class="progress-bar" id="progressBar"></div>
+                    </div>
+                    <div class="slides-grid" id="slidesGrid"></div>
+                </div>
+
+                <div class="error-message" id="errorMessage"></div>
+                <a href="#" class="download-btn" id="downloadBtn">Download PDF</a>
+            </div>
+        </div>
+
+        <div class="instructions">
+            <h3>How to Use Your Converted PDF</h3>
+            <ol>
+                <li>Upload your slide (PDF or image file)</li>
+                <li>Enter your Gemini API key (free from Google)</li>
+                <li>Click "Convert to PDF" and wait for processing</li>
+                <li>Download your converted PDF</li>
+                <li><strong>Import to Canva:</strong> Upload the PDF and edit each element individually</li>
+                <li><strong>Import to Google Slides:</strong> File → Import slides → Select your PDF</li>
+                <li><strong>Import to PowerPoint:</strong> Insert → Pictures → Select your PDF pages</li>
+            </ol>
+            <p>
+                The conversion preserves layout, graphics, and text positioning for easy editing in your favorite presentation software.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('file');
+        const uploadArea = document.getElementById('uploadArea');
+        const fileName = document.getElementById('fileName');
+        const uploadForm = document.getElementById('uploadForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const processingDiv = document.getElementById('processingDiv');
+        const processingText = document.getElementById('processingText');
+        const progressBar = document.getElementById('progressBar');
+        const progressPercent = document.getElementById('progressPercent');
+        const slidesGrid = document.getElementById('slidesGrid');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const errorMessage = document.getElementById('errorMessage');
+
+        const stageLabels = {
+            'waiting': 'Waiting...',
+            'extracting': 'Extracting',
+            'generating': 'AI Processing',
+            'converting': 'Converting',
+            'complete': 'Complete'
+        };
+
+        // File upload handling
+        fileInput.addEventListener('change', function(e) {
+            if (this.files.length > 0) {
+                fileName.textContent = this.files[0].name;
+                fileName.classList.add('active');
+            }
+        });
+
+        // Drag and drop
+        uploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.classList.add('drag-over');
+        });
+
+        uploadArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            this.classList.remove('drag-over');
+        });
+
+        uploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.classList.remove('drag-over');
+
+            if (e.dataTransfer.files.length > 0) {
+                fileInput.files = e.dataTransfer.files;
+                fileName.textContent = e.dataTransfer.files[0].name;
+                fileName.classList.add('active');
+            }
+        });
+
+        // Form submission
+        uploadForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Uploading...';
+
+            const formData = new FormData(uploadForm);
+
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    showError(data.error);
+                    resetForm();
+                    return;
+                }
+
+                // Show processing UI
+                processingDiv.classList.add('active');
+                submitBtn.style.display = 'none';
+
+                // Create slide status cards
+                createSlideCards(data.total_slides);
+
+                // Start listening to progress
+                listenToProgress(data.job_id);
+
+            } catch (err) {
+                showError('Failed to upload file. Please try again.');
+                resetForm();
+            }
+        });
+
+        function createSlideCards(total) {
+            slidesGrid.innerHTML = '';
+            for (let i = 1; i <= total; i++) {
+                const card = document.createElement('div');
+                card.className = 'slide-status waiting';
+                card.id = `slide-${i}`;
+                card.innerHTML = `
+                    <div class="slide-num">Slide ${i}</div>
+                    <div class="stage">${stageLabels['waiting']}</div>
+                `;
+                slidesGrid.appendChild(card);
+            }
+        }
+
+        function listenToProgress(jobId) {
+            const eventSource = new EventSource(`/progress/${jobId}`);
+
+            eventSource.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+
+                if (data.error) {
+                    showError(data.error);
+                    eventSource.close();
+                    return;
+                }
+
+                // Update progress bar
+                const percent = Math.round((data.completed / data.total) * 100);
+                progressBar.style.width = `${percent}%`;
+                progressPercent.textContent = `${percent}%`;
+
+                // Update slide cards
+                for (const [slideNum, stage] of Object.entries(data.slides)) {
+                    const card = document.getElementById(`slide-${slideNum}`);
+                    if (card) {
+                        card.className = `slide-status ${stage}`;
+                        card.querySelector('.stage').textContent = stageLabels[stage] || stage;
+                    }
+                }
+
+                // Update processing text
+                if (data.completed === data.total) {
+                    processingText.textContent = 'Finalizing PDF...';
+                } else {
+                    processingText.textContent = `Processing ${data.completed} of ${data.total} slides...`;
+                }
+
+                // Check if done
+                if (data.status === 'done') {
+                    eventSource.close();
+                    processingText.textContent = 'Processing complete!';
+                    document.querySelector('.loader').style.display = 'none';
+                    downloadBtn.href = `/download/${jobId}`;
+                    downloadBtn.classList.add('active');
+                }
+
+                if (data.status === 'error') {
+                    eventSource.close();
+                    showError(data.error || 'An error occurred during processing.');
+                }
+            };
+
+            eventSource.onerror = function() {
+                eventSource.close();
+            };
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.add('active');
+            document.querySelector('.loader').style.display = 'none';
+            processingText.textContent = 'Error occurred';
+        }
+
+        function resetForm() {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Convert to PDF';
+            submitBtn.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
