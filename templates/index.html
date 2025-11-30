@@ -541,6 +541,19 @@
             'complete': 'Complete'
         };
 
+        const geminiMessages = [
+            "Gemini is a bit slow, but worth the wait...",
+            "Sorry, Gemini takes its time (but gets the layout right!)",
+            "Patience... Gemini is slow but accurate",
+            "Other models can't match Gemini's layout coherence",
+            "Still processing... Gemini is thorough!",
+            "Gemini: slow but precise with layouts",
+            "Good things come to those who wait...",
+            "Gemini is carefully analyzing your slide..."
+        ];
+        let geminiMessageIndex = 0;
+        let geminiMessageInterval = null;
+
         // File upload handling
         fileInput.addEventListener('change', function(e) {
             if (this.files.length > 0) {
@@ -651,9 +664,19 @@
                 }
 
                 // Update processing text
+                const isGenerating = Object.values(data.slides).some(stage => stage === 'generating');
+
                 if (data.completed === data.total) {
                     processingText.textContent = 'Finalizing PDF...';
+                    stopGeminiMessages();
+                } else if (isGenerating) {
+                    // Show rotating Gemini slow messages during AI processing
+                    if (!geminiMessageInterval) {
+                        showGeminiMessage();
+                        geminiMessageInterval = setInterval(showGeminiMessage, 4000);
+                    }
                 } else {
+                    stopGeminiMessages();
                     processingText.textContent = `Processing ${data.completed} of ${data.total} slides...`;
                 }
 
@@ -677,11 +700,24 @@
             };
         }
 
+        function showGeminiMessage() {
+            processingText.textContent = geminiMessages[geminiMessageIndex];
+            geminiMessageIndex = (geminiMessageIndex + 1) % geminiMessages.length;
+        }
+
+        function stopGeminiMessages() {
+            if (geminiMessageInterval) {
+                clearInterval(geminiMessageInterval);
+                geminiMessageInterval = null;
+            }
+        }
+
         function showError(message) {
             errorMessage.textContent = message;
             errorMessage.classList.add('active');
             document.querySelector('.loader').style.display = 'none';
             processingText.textContent = 'Error occurred';
+            stopGeminiMessages();
         }
 
         function resetForm() {
