@@ -104,14 +104,14 @@ def remove_text_from_slide(image_path: str, output_path: str, gemini_client, lay
     for i in range(n_boxes):
         conf = int(data['conf'][i])
         text = data['text'][i].strip()
-        if conf > 60 and text and len(text) > 0:
+        if conf > 50 and text and len(text) > 0:
             x, y, w, h = data['left'][i], data['top'][i], data['width'][i], data['height'][i]
             detected_text.append(text)
 
             # Get the local surrounding color for this text region
             local_color = get_surrounding_color(img, x, y, w, h)
 
-            padding = 20
+            padding = 17
             x1 = max(0, x - padding)
             y1 = max(0, y - padding)
             x2 = min(img.shape[1], x + w + padding)
